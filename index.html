@@ -60,19 +60,6 @@
         #high-scores li {
             margin-bottom: 5px;
         }
-         /* Style untuk panduan */
-        #instructions {
-            margin-top: 20px;
-            text-align: left;
-            display: none; /* Awalnya disembunyikan */
-        }
-        #instructions h2 {
-            font-size: 1.5em;
-            margin-bottom: 10px;
-        }
-        #instructions p {
-            margin-bottom: 10px;
-        }
         .question {
             font-size: 18px;
             margin-bottom: 20px;
@@ -128,7 +115,7 @@
         <div class="menu" id="menu">
             <button onclick="startGame()">Mulai Game</button>
             <button onclick="showHighScores()">Lihat Skor Tertinggi</button>
-            <button onclick="showInstructions()">Panduan</button>
+            <button onclick="showInstructions()">Cara Bermain</button>
         </div>
 
         <!-- Tampilan Game (Awalnya Tersembunyi) -->
@@ -145,16 +132,6 @@
             <h2>Skor Tertinggi</h2>
             <ol id="high-scores-list"></ol>
              <button onclick="showMenu()">Kembali ke Menu</button>
-        </div>
-
-         <!-- Panduan (Awalnya Tersembunyi) -->
-        <div id="instructions">
-            <h2>Panduan Bermain</h2>
-            <p>Selamat datang di Ekonomi Makmur: Uji Pengetahuanmu!</p>
-            <p>Tujuan Anda adalah menjawab soal-soal pilihan ganda tentang ekonomi dengan benar sebelum waktu habis.</p>
-            <p>Setiap jawaban benar akan meningkatkan skor Anda.</p>
-            <p>Setelah game selesai, skor Anda akan disimpan (jika memenuhi syarat) dan dapat dilihat di menu Skor Tertinggi.</p>
-            <button onclick="showMenu()">Kembali ke Menu</button>
         </div>
     </div>
 
@@ -297,7 +274,6 @@
         const gameContainerEl = document.getElementById("game-container");
         const highScoresContainerEl = document.getElementById("high-scores");
         const highScoresListEl = document.getElementById("high-scores-list");
-        const instructionsContainerEl = document.getElementById("instructions");
 
         function loadQuestion() {
             const q = questions[currentQuestion];
@@ -346,8 +322,6 @@
             menuEl.style.display = "none";
             // Sembunyikan tampilan skor tertinggi
              highScoresContainerEl.style.display = "none";
-             // Sembunyikan tampilan panduan
-            instructionsContainerEl.style.display = "none";
             // Tampilkan tampilan game
             gameContainerEl.style.display = "block";
 
@@ -366,7 +340,39 @@
             menuEl.style.display = "none";
             // Sembunyikan tampilan game
             gameContainerEl.style.display = "none";
-            // Sembunyikan tampilan panduan
-            instructionsContainerEl.style.display = "none";
             // Tampilkan tampilan skor tertinggi
-            
+            highScoresContainerEl.style.display = "block";
+
+            // Urutkan skor tertinggi dari yang tertinggi ke terendah
+            highScores.sort((a, b) => b - a);
+
+            // Tampilkan skor tertinggi di daftar
+            highScoresListEl.innerHTML = "";
+            for (let i = 0; i < highScores.length; i++) {
+                const score = highScores[i];
+                const li = document.createElement("li");
+                li.textContent = score;
+                highScoresListEl.appendChild(li);
+            }
+        }
+
+        function showInstructions() {
+            alert("Cara bermain: Jawab soal-soal pilihan ganda dengan benar sebelum waktu habis!");
+        }
+
+         function showMenu() {
+            // Tampilkan menu utama
+            menuEl.style.display = "block";
+            // Sembunyikan tampilan skor tertinggi
+            highScoresContainerEl.style.display = "none";
+        }
+
+        function endGame() {
+            clearInterval(timerInterval);
+            questionEl.textContent = "Game Selesai!";
+            optionsEl.innerHTML = "";
+            explanationEl.textContent = `Skor akhir Anda: ${score} dari ${questions.length}.`;
+
+            // Simpan skor saat ini ke daftar skor tertinggi (jika memenuhi syarat)
+            highScores.push(score);
+            highScores.
