@@ -44,22 +44,6 @@
         .menu button:hover {
             background-color: #0056b3;
         }
-        /* Style untuk daftar skor tertinggi */
-        #high-scores {
-            margin-top: 20px;
-            text-align: left;
-        }
-        #high-scores h2 {
-            font-size: 1.5em;
-            margin-bottom: 10px;
-        }
-        #high-scores ol {
-            list-style-type: decimal;
-            padding-left: 20px;
-        }
-        #high-scores li {
-            margin-bottom: 5px;
-        }
         .question {
             font-size: 18px;
             margin-bottom: 20px;
@@ -101,10 +85,6 @@
         #game-container {
             display: none;
         }
-        /* Style untuk menyembunyikan tampilan skor */
-         #high-scores {
-            display: none;
-        }
     </style>
 </head>
 <body>
@@ -125,13 +105,6 @@
             <div class="options" id="options"></div>
             <div class="score" id="score">Skor: 0</div>
             <div class="explanation" id="explanation"></div>
-        </div>
-
-        <!-- Daftar Skor Tertinggi (Awalnya Tersembunyi) -->
-        <div id="high-scores">
-            <h2>Skor Tertinggi</h2>
-            <ol id="high-scores-list"></ol>
-             <button onclick="showMenu()">Kembali ke Menu</button>
         </div>
     </div>
 
@@ -263,7 +236,6 @@
         let score = 0;
         let timeLeft = 60;
         let timerInterval;
-         let highScores = JSON.parse(localStorage.getItem('highScores')) || [];
 
         const questionEl = document.getElementById("question");
         const optionsEl = document.getElementById("options");
@@ -272,8 +244,6 @@
         const explanationEl = document.getElementById("explanation");
         const menuEl = document.getElementById("menu");
         const gameContainerEl = document.getElementById("game-container");
-        const highScoresContainerEl = document.getElementById("high-scores");
-        const highScoresListEl = document.getElementById("high-scores-list");
 
         function loadQuestion() {
             const q = questions[currentQuestion];
@@ -320,8 +290,6 @@
         function startGame() {
             // Sembunyikan menu utama
             menuEl.style.display = "none";
-            // Sembunyikan tampilan skor tertinggi
-             highScoresContainerEl.style.display = "none";
             // Tampilkan tampilan game
             gameContainerEl.style.display = "block";
 
@@ -336,35 +304,11 @@
         }
 
         function showHighScores() {
-            // Sembunyikan menu utama
-            menuEl.style.display = "none";
-            // Sembunyikan tampilan game
-            gameContainerEl.style.display = "none";
-            // Tampilkan tampilan skor tertinggi
-            highScoresContainerEl.style.display = "block";
-
-            // Urutkan skor tertinggi dari yang tertinggi ke terendah
-            highScores.sort((a, b) => b - a);
-
-            // Tampilkan skor tertinggi di daftar
-            highScoresListEl.innerHTML = "";
-            for (let i = 0; i < highScores.length; i++) {
-                const score = highScores[i];
-                const li = document.createElement("li");
-                li.textContent = score;
-                highScoresListEl.appendChild(li);
-            }
+            alert("Fitur skor tertinggi belum tersedia.");
         }
 
         function showInstructions() {
             alert("Cara bermain: Jawab soal-soal pilihan ganda dengan benar sebelum waktu habis!");
-        }
-
-         function showMenu() {
-            // Tampilkan menu utama
-            menuEl.style.display = "block";
-            // Sembunyikan tampilan skor tertinggi
-            highScoresContainerEl.style.display = "none";
         }
 
         function endGame() {
@@ -373,6 +317,10 @@
             optionsEl.innerHTML = "";
             explanationEl.textContent = `Skor akhir Anda: ${score} dari ${questions.length}.`;
 
-            // Simpan skor saat ini ke daftar skor tertinggi (jika memenuhi syarat)
-            highScores.push(score);
-            highScores.
+            // Tampilkan menu utama lagi setelah game selesai
+            menuEl.style.display = "block";
+            gameContainerEl.style.display = "none";
+        }
+    </script>
+</body>
+</html>
