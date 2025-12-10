@@ -295,7 +295,7 @@
 
             currentQuestion = 0; // Reset soal
             score = 0; // Reset skor
-            timeLeft = 60; // Reset waktu
+            timeLeft = 600; // Reset waktu
             scoreEl.textContent = `Skor: ${score}`; // Tampilkan skor awal
             timerEl.textContent = timeLeft; // Tampilkan waktu awal
 
@@ -304,13 +304,32 @@
         }
 
         function showHighScores() {
-            alert("Fitur skor tertinggi belum tersedia.");
-        }
-
-        function showInstructions() {
-            alert("Cara bermain: Jawab soal-soal pilihan ganda dengan benar sebelum waktu habis!");
-        }
-
+             menuEl.style.display = "none";
+             gameContainerEl.style.display = "none";
+             highScoreContainerEl.style.display = "block";
+             // Urutkan skor tertinggi dari yang tertinggi ke terendah
+             highScores.sort((a, b) => b - a);
+             // Batasi hanya 5 skor tertinggi yang ditampilkan
+             const topScores = highScores.slice(0, 5);
+             // Tampilkan skor tertinggi di daftar
+             highScoreListEl.innerHTML = "";
+             topScores.forEach(score => {
+                 const li = document.createElement("li");
+                 li.textContent = score;
+                 highScoreListEl.appendChild(li);
+             });
+         }
+        
+         function showInstructions() {
+             alert("Cara bermain: Jawab soal-soal pilihan ganda dengan benar sebelum waktu habis!");
+         }
+        
+         function showMenu() {
+             menuEl.style.display = "block";
+             highScoreContainerEl.style.display = "none";
+             gameContainerEl.style.display = "none";
+         }
+        
         function endGame() {
             clearInterval(timerInterval);
             questionEl.textContent = "Game Selesai!";
