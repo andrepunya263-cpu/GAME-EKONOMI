@@ -44,6 +44,23 @@
         .menu button:hover {
             background-color: #0056b3;
         }
+        /* Style untuk daftar skor tertinggi */
+        #high-scores {
+            margin-top: 20px;
+            text-align: left;
+            display: none;
+        }
+        #high-scores h2 {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+        }
+        #high-scores ol {
+            list-style-type: decimal;
+            padding-left: 20px;
+        }
+        #high-scores li {
+            margin-bottom: 5px;
+        }
         .question {
             font-size: 18px;
             margin-bottom: 20px;
@@ -105,6 +122,13 @@
             <div class="options" id="options"></div>
             <div class="score" id="score">Skor: 0</div>
             <div class="explanation" id="explanation"></div>
+        </div>
+
+        <!-- Daftar Skor Tertinggi (Awalnya Tersembunyi) -->
+        <div id="high-scores">
+            <h2>Skor Tertinggi</h2>
+            <ol id="high-scores-list"></ol>
+            <button onclick="showMenu()">Kembali ke Menu</button>
         </div>
     </div>
 
@@ -200,19 +224,19 @@
                 answer: "Penerima pajak dan pemberi subsidi",
                 explanation: "Pemerintah mengumpulkan pajak dan memberikan subsidi."
             },
-             {
+            {
                 question: "Berikut beberapa daftar kegiatan ekonomi. Kegiatan konsumsi ditunjukkan oleh….?",
                 options: ["A1, B1, dan C1", "A2, B1, dan C2", "A2, B1, dan C3", "A3, B1, dan C1", "A3, B3, dan C3"],
                 answer: "A3, B3, dan C3",
                 explanation: "kegiatan konsumsi ditunjukkan oleh A3, B3, dan C3"
             },
-             {
+            {
                 question: "Rita dan Nina ingin makan siang. Keduanya ingin makan ayam. Nina mengajak Rita ayam yang cukup terkenal. Namun, uang Rita hanya cukup untuk membeli ayam goreng yang harganya Rp8.000,00 saja. Faktor yang memengaruhi kegiatan konsumsi tersebut adalah…?",
                 options: ["tingkat pendapatan", "selera", "perkiraan harga di masa mendatang", "kondisi tempat tinggal", "kebiasaan dan kondisi sosial budaya masyarakat"],
                 answer: "tingkat pendapatan",
                 explanation: "faktor yang mempengaruhi adalah tingkat pendapatan"
             },
-             {
+            {
                 question: "Berikut termasuk kegiatan ekonomi yang dilakukan oleh kelompok masyarakat luar negeri, kecuali?",
                 options: ["membeli hasil-hasil barang ekspor", "menyediakan kebutuhan barang impor", "menyediakan kredit untuk pemerintah dan swasta dalam negeri", "membelanjakan penerimaan negara untuk membeli barang-barang kebutuhan pemerintah", "sebagai penghubung pasar uang dalam negeri dengan pasar uang luar negeri"],
                 answer: "membelanjakan penerimaan negara untuk membeli barang-barang kebutuhan pemerintah",
@@ -236,6 +260,7 @@
         let score = 0;
         let timeLeft = 60;
         let timerInterval;
+        let highScores = JSON.parse(localStorage.getItem('highScores')) || [];
 
         const questionEl = document.getElementById("question");
         const optionsEl = document.getElementById("options");
@@ -244,6 +269,8 @@
         const explanationEl = document.getElementById("explanation");
         const menuEl = document.getElementById("menu");
         const gameContainerEl = document.getElementById("game-container");
+        const highScoresContainerEl = document.getElementById("high-scores");
+        const highScoresListEl = document.getElementById("high-scores-list");
 
         function loadQuestion() {
             const q = questions[currentQuestion];
@@ -288,39 +315,35 @@
         }
 
         function startGame() {
-            // Sembunyikan menu utama
             menuEl.style.display = "none";
-            // Tampilkan tampilan game
+            highScoresContainerEl.style.display = "none";
             gameContainerEl.style.display = "block";
 
-            currentQuestion = 0; // Reset soal
-            score = 0; // Reset skor
-            timeLeft = 60; // Reset waktu
-            scoreEl.textContent = `Skor: ${score}`; // Tampilkan skor awal
-            timerEl.textContent = timeLeft; // Tampilkan waktu awal
+            currentQuestion = 0;
+            score = 0;
+            timeLeft = 60;
+            scoreEl.textContent = `Skor: ${score}`;
+            timerEl.textContent = timeLeft;
 
             loadQuestion();
             timerInterval = setInterval(updateTimer, 1000);
         }
 
         function showHighScores() {
-            alert("Fitur skor tertinggi belum tersedia.");
-        }
-
-        function showInstructions() {
-            alert("Cara bermain: Jawab soal-soal pilihan ganda dengan benar sebelum waktu habis!");
-        }
-
-        function endGame() {
-            clearInterval(timerInterval);
-            questionEl.textContent = "Game Selesai!";
-            optionsEl.innerHTML = "";
-            explanationEl.textContent = `Skor akhir Anda: ${score} dari ${questions.length}.`;
-
-            // Tampilkan menu utama lagi setelah game selesai
-            menuEl.style.display = "block";
+            menuEl.style.display = "none";
             gameContainerEl.style.display = "none";
-        }
-    </script>
-</body>
-</html>
+            highScoresContainerEl.style.display = "block";
+
+            // Urutkan skor dari tertinggi ke terendah
+            highScores.sort((a, b) => b - a);
+
+            // Hanya tampilkan 10 skor tertinggi agar tidak terlalu banyak
+            const topScores = highScores.slice(0, 10);
+
+            highScoresListEl.innerHTML = "";
+            
+            // Jika tidak ada skor, tampilkan pesan
+            if (topScores.length === 0) {
+                const li = document.createElement("li");
+                li.textContent = "Belum ada skor yang disimpan";
+                highScoresListEl.appendChild(
