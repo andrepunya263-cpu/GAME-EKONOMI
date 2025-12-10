@@ -44,36 +44,6 @@
         .menu button:hover {
             background-color: #0056b3;
         }
-        /* Style untuk daftar skor tertinggi */
-        #high-scores {
-            margin-top: 20px;
-            text-align: left;
-            display: none;
-        }
-        #high-scores h2 {
-            font-size: 1.5em;
-            margin-bottom: 10px;
-        }
-        #high-scores ol {
-            list-style-type: decimal;
-            padding-left: 20px;
-        }
-        #high-scores li {
-            margin-bottom: 5px;
-        }
-        /* Style untuk panduan */
-        #instructions {
-            margin-top: 20px;
-            text-align: left;
-            display: none; /* Awalnya disembunyikan */
-        }
-        #instructions h2 {
-            font-size: 1.5em;
-            margin-bottom: 10px;
-        }
-        #instructions p {
-            margin-bottom: 10px;
-        }
         .question {
             font-size: 18px;
             margin-bottom: 20px;
@@ -135,22 +105,6 @@
             <div class="options" id="options"></div>
             <div class="score" id="score">Skor: 0</div>
             <div class="explanation" id="explanation"></div>
-        </div>
-
-        <!-- Daftar Skor Tertinggi (Awalnya Tersembunyi) -->
-        <div id="high-scores">
-            <h2>Skor Tertinggi</h2>
-            <ol id="high-scores-list"></ol>
-            <button onclick="showMenu()">Kembali ke Menu</button>
-        </div>
-
-        <!-- Panduan (Awalnya Tersembunyi) -->
-        <div id="instructions">
-            <h2>Cara Bermain</h2>
-            <p>Selamat datang di Ekonomi Makmur!</p>
-            <p>Jawab soal-soal pilihan ganda dengan benar sebelum waktu habis.</p>
-            <p>Skor tertinggi akan disimpan.</p>
-            <button onclick="showMenu()">Kembali ke Menu</button>
         </div>
     </div>
 
@@ -246,24 +200,127 @@
                 answer: "Penerima pajak dan pemberi subsidi",
                 explanation: "Pemerintah mengumpulkan pajak dan memberikan subsidi."
             },
-            {
+             {
                 question: "Berikut beberapa daftar kegiatan ekonomi. Kegiatan konsumsi ditunjukkan oleh….?",
                 options: ["A1, B1, dan C1", "A2, B1, dan C2", "A2, B1, dan C3", "A3, B1, dan C1", "A3, B3, dan C3"],
                 answer: "A3, B3, dan C3",
                 explanation: "kegiatan konsumsi ditunjukkan oleh A3, B3, dan C3"
             },
-            {
+             {
                 question: "Rita dan Nina ingin makan siang. Keduanya ingin makan ayam. Nina mengajak Rita ayam yang cukup terkenal. Namun, uang Rita hanya cukup untuk membeli ayam goreng yang harganya Rp8.000,00 saja. Faktor yang memengaruhi kegiatan konsumsi tersebut adalah…?",
                 options: ["tingkat pendapatan", "selera", "perkiraan harga di masa mendatang", "kondisi tempat tinggal", "kebiasaan dan kondisi sosial budaya masyarakat"],
                 answer: "tingkat pendapatan",
                 explanation: "faktor yang mempengaruhi adalah tingkat pendapatan"
             },
-            {
+             {
                 question: "Berikut termasuk kegiatan ekonomi yang dilakukan oleh kelompok masyarakat luar negeri, kecuali?",
-                options: ["membeli hasil-hasil barang ekspor", "menyediakan kebutuhan barang impor", "menyediakan kredit untuk pemerintah", "membelanjakan penerimaan negara untuk membeli barang-barang kebutuhan pemerintah", "sebagai penghubung pasar uang dalam negeri dengan pasar uang luar negeri"],
+                options: ["membeli hasil-hasil barang ekspor", "menyediakan kebutuhan barang impor", "menyediakan kredit untuk pemerintah dan swasta dalam negeri", "membelanjakan penerimaan negara untuk membeli barang-barang kebutuhan pemerintah", "sebagai penghubung pasar uang dalam negeri dengan pasar uang luar negeri"],
                 answer: "membelanjakan penerimaan negara untuk membeli barang-barang kebutuhan pemerintah",
                 explanation: "kecuali membelanjakan penerimaan negara untuk membeli barang-barang kebutuhan pemerintah"
             },
             {
                 question: "Berdasarkan perilaku tersebut yang termasuk pelaku produsen adalah…?",
-                options: ["1, 2, dan 3", "1, 3, dan 5", "2, 3, dan 4", "2, 4, dan 5", "3, 
+                options: ["1, 2, dan 3", "1, 3, dan 5", "2, 3, dan 4", "2, 4, dan 5", "3, 4, dan 5"],
+                answer: "2, 4, dan 5",
+                explanation: "Yang termasuk perilaku produsen adalah 2, 4, dan 5"
+            },
+            {
+                question: "Perhatikan fungsi distributor berikut! Yang merupakan fungsi distributor adalah nomor…?",
+                options: ["1 dan 2", "1 dan 4", "2 dan 3", "2 dan 4", "3 dan 4"],
+                answer: "1 dan 2",
+                explanation: "fungsi distributor adalah nomor 1 dan 2"
+            },
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+        let timeLeft = 60;
+        let timerInterval;
+
+        const questionEl = document.getElementById("question");
+        const optionsEl = document.getElementById("options");
+        const scoreEl = document.getElementById("score");
+        const timerEl = document.getElementById("time");
+        const explanationEl = document.getElementById("explanation");
+        const menuEl = document.getElementById("menu");
+        const gameContainerEl = document.getElementById("game-container");
+
+        function loadQuestion() {
+            const q = questions[currentQuestion];
+            questionEl.textContent = q.question;
+            optionsEl.innerHTML = "";
+
+            q.options.forEach(option => {
+                const button = document.createElement("button");
+                button.textContent = option;
+                button.onclick = () => checkAnswer(option);
+                optionsEl.appendChild(button);
+            });
+
+            explanationEl.textContent = "";
+        }
+
+        function checkAnswer(answer) {
+            const q = questions[currentQuestion];
+            if (answer === q.answer) {
+                score++;
+                scoreEl.textContent = `Skor: ${score}`;
+                explanationEl.textContent = "Benar! " + q.explanation;
+            } else {
+                explanationEl.textContent = "Salah. Jawaban yang benar adalah: " + q.answer + ". " + q.explanation;
+            }
+
+            currentQuestion++;
+            if (currentQuestion < questions.length) {
+                loadQuestion();
+            } else {
+                endGame();
+            }
+        }
+
+        function updateTimer() {
+            timeLeft--;
+            timerEl.textContent = timeLeft;
+
+            if (timeLeft <= 0) {
+                endGame();
+            }
+        }
+
+        function startGame() {
+            // Sembunyikan menu utama
+            menuEl.style.display = "none";
+            // Tampilkan tampilan game
+            gameContainerEl.style.display = "block";
+
+            currentQuestion = 0; // Reset soal
+            score = 0; // Reset skor
+            timeLeft = 60; // Reset waktu
+            scoreEl.textContent = `Skor: ${score}`; // Tampilkan skor awal
+            timerEl.textContent = timeLeft; // Tampilkan waktu awal
+
+            loadQuestion();
+            timerInterval = setInterval(updateTimer, 1000);
+        }
+
+        function showHighScores() {
+            alert("Fitur skor tertinggi belum tersedia.");
+        }
+
+        function showInstructions() {
+            alert("Cara bermain: Jawab soal-soal pilihan ganda dengan benar sebelum waktu habis!");
+        }
+
+        function endGame() {
+            clearInterval(timerInterval);
+            questionEl.textContent = "Game Selesai!";
+            optionsEl.innerHTML = "";
+            explanationEl.textContent = `Skor akhir Anda: ${score} dari ${questions.length}.`;
+
+            // Tampilkan menu utama lagi setelah game selesai
+            menuEl.style.display = "block";
+            gameContainerEl.style.display = "none";
+        }
+    </script>
+</body>
+</html>
