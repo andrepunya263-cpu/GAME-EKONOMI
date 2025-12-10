@@ -304,21 +304,8 @@
         }
 
         function showHighScores() {
-             menuEl.style.display = "none";
-             gameContainerEl.style.display = "none";
-             highScoreContainerEl.style.display = "block";
-             // tampilkan skor
-             highScores.sort((a, b) => b - a);
-             // Batasi hanya 5 skor tertinggi yang ditampilkan
-             const topScores = highScores.slice(0, 5);
-             // Tampilkan skor tertinggi di daftar
-             highScoreListEl.innerHTML = "";
-             topScores.forEach(score => {
-                 const li = document.createElement("li");
-                 li.textContent = score;
-                 highScoreListEl.appendChild(li);
-             });
-         }
+            alert("Fitur skor tertinggi belum tersedia soalnya susah untuk menambahkan mohon maaf atas ketidakk nyamanannya.");
+        }
         
          function showInstructions() {
              alert("Cara bermain: Jawab soal-soal pilihan ganda dengan benar sebelum waktu habis!");
